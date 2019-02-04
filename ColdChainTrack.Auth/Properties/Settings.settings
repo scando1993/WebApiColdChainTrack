@@ -1,0 +1,75 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ColdChainTrack.Auth.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="FacebookAppToken" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">1792084127752361|vm-EizizTd-MuSqZyNMwxJr44uI</Value>
+    </Setting>
+    <Setting Name="FacebookAppSecret" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">387c8c326f6dec2f5e3b35c8a447884a</Value>
+    </Setting>
+    <Setting Name="FacebookAppId" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">1792084127752361</Value>
+    </Setting>
+    <Setting Name="GoogleClientId" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">518197716948-4itbj4c4vrno2v0h3rsqmua5htvuevrl.apps.googleusercontent.com</Value>
+    </Setting>
+    <Setting Name="GoogleClientSecret" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">awBDLy7Rc1Msxav_E_A1VR3o</Value>
+    </Setting>
+    <Setting Name="ProfileImageStoragePath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">C:\Users\Usuario\Documents\Visual Studio 2017\Projects\PacificSoftTemplates\ColdChainTrack.Auth\img\profile</Value>
+    </Setting>
+    <Setting Name="ProfileImagesServerPath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://dev.salinasyachtclub.com/MEDIA/ProfileImagesDev/</Value>
+    </Setting>
+    <Setting Name="smtpServer" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">smtp.mandrillapp.com</Value>
+    </Setting>
+    <Setting Name="smtpUser" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">billy.molina@gmail.com</Value>
+    </Setting>
+    <Setting Name="smtpPass" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">Xz4D_dcsxPbqO5B4E6lhUQ</Value>
+    </Setting>
+    <Setting Name="smtpDisplayName" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">salinasyachtclub.com</Value>
+    </Setting>
+    <Setting Name="smtpReplyTo" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">info@pacificsoft.net</Value>
+    </Setting>
+    <Setting Name="sslPort" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">587</Value>
+    </Setting>
+    <Setting Name="smtpPort" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">587</Value>
+    </Setting>
+    <Setting Name="EnableSsl" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="IsBodyHtml" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="TemplatesPath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">C:\inetpub\wwwroot\TerminalAPI\Templates\</Value>
+    </Setting>
+    <Setting Name="UseEmailService" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="LocalMode" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="DefaultWebUrl" Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ConfirmEmailWebRoute" Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ResetPasswordWebRoute" Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ChangeEmailWebRoute" Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
+  </Settings>
+</SettingsFile>
