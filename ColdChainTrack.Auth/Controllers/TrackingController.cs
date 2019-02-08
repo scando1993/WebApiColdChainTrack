@@ -29,18 +29,50 @@ namespace ColdChainTrack.Auth.Controllers
         /// <param name="family">family name</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("getTemperature")]
+        [Route("trackAll")]
         public HttpResponseMessage RetrieveTemperature(string name, string family)
         {
+            Device device = dbContext.Devices.FirstOrDefault(d => d.Name == name && d.Family == family);
 
-            var obj = dbContext.Devices.FirstOrDefault(d => d.Name == name && d.Family == family);
+            if (device == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound);
+            }
+            List<Tracking> trackingList = dbContext.Trackings.Where(t=> t.DeviceIdDevice == device.IdDevice).ToList();
+            
+            return Request.CreateResponse(HttpStatusCode.OK, JsonConvert.SerializeObject(trackingList));
+        }
 
-            if (obj == null)
+        [HttpGet]
+        [Route("getAllFamilies")]
+        public HttpResponseMessage RetrieveTemperature()
+        {
+            var families = dbContext.Devices.GroupBy(f => f.Family, (key, group) => new { family = key }).ToList();
+
+            if (families == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound);
             }
 
-            return Request.CreateResponse(HttpStatusCode.OK, obj);
+            return Request.CreateResponse(HttpStatusCode.OK, JsonConvert.SerializeObject(families));
+        }
+
+        /// <summary>
+        /// Get list device from a family
+        /// </summary>
+        /// <param name="family">Family's name</param>
+        /// <returns>device json if all it's OK or 404</returns>
+        [HttpGet]
+        [Route("getAllDevice")]
+        public HttpResponseMessage RetrieveTemperature(string family)
+        {
+            var devices = dbContext.Devices.Where(d=> d.Family == family).ToList();
+            
+            if (devices == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound);
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, JsonConvert.SerializeObject(devices));
         }
 
         /// <summary>
@@ -56,6 +88,15 @@ namespace ColdChainTrack.Auth.Controllers
             dbContext.Trackings.Add(tracking);
             dbContext.SaveChanges();
             return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
+        [HttpPost]
+        [Route("addDevice")]
+        public HttpResponseMessage AddDevice(Device device)
+        {
+            dbContext.Devices.Add(device);
+            dbContext.SaveChanges();
+            return Request.CreateResponse(HttpStatusCode.Created);
         }
 
         [HttpGet]

@@ -97,7 +97,8 @@ namespace ColdChainTrack.Auth.Models
         public int msgId { get; set; }
         public string device { get; set; }
         public int Frame { get; set; }
-        public long time { get; set; }
+        //public long time { get; set; }
+        public DateTime time { get; set; }
         public String payload1 { get; set; }
         public String payload2 { get; set; }
     }
