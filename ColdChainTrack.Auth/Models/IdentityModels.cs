@@ -102,4 +102,9 @@ namespace ColdChainTrack.Auth.Models
         public String payload1 { get; set; }
         public String payload2 { get; set; }
     }
+
+    public class LocationName
+    {
+        public string name { get; set; }
+    }
 }
