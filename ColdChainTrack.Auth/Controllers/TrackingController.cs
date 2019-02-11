@@ -68,9 +68,10 @@ namespace ColdChainTrack.Auth.Controllers
                     x.Dtm,
                     x.Temperature,
                     x.Latitude,
-                    x.Longitude
+                    x.Longitude,
+                    x.Device
                 })
-                .Select(g => new { g.Key.Location, g.Key.Dtm, g.Key.Temperature, g.Key.Latitude, g.Key.Longitude })
+                .Select(g => new { g.Key.Location, g.Key.Dtm, g.Key.Temperature, g.Key.Latitude, g.Key.Longitude, g.Key.Device.Name, g.Key.Device.Family })
                 .OrderBy(o => o.Dtm).ToList();
 
                 return Request.CreateResponse(HttpStatusCode.OK, currentTrackings);
