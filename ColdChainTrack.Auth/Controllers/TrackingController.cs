@@ -154,24 +154,90 @@ namespace ColdChainTrack.Auth.Controllers
 
         [HttpGet]
         [Route("groupby")]
-        public HttpResponseMessage GetAlltrackingGroupBy()
+        public HttpResponseMessage GetAlltrackingGroupBy(string family)
         {
             try
             {
-                var currentTrackings = dbContext.Trackings.GroupBy(x => new
-                {
-                    x.Location,
-                    //x.Dtm,
-                    //x.Temperature,
-                    //x.Latitude,
-                    //x.Longitude,
-                    //x.Device.Name,
-                    //x.Device.Family
-                }).ToList();
-                //.Select(g => new { g.Key.Location, g.Key.Dtm, g.Key.Temperature, g.Key.Latitude, g.Key.Longitude, g.Key.Name, g.Key.Family })
-                //.OrderBy(o => o.Dtm).ToList();
+                //Se obtienen todos los devices por familia
+                var devices = dbContext.Devices.Where(d => d.Family.Equals(family));
 
-                return Request.CreateResponse(HttpStatusCode.OK, currentTrackings);
+                //Se obtiene todos los trackings de los devices seleccionados
+                var trackings = (from A in dbContext.Trackings
+                                 join B in devices on A.DeviceIdDevice equals B.IdDevice
+                                 select A).ToList();
+
+                //Se agrupa los trackings por locations
+                List<LocationViewModel> locations = new List<LocationViewModel>();
+                foreach (var location in trackings.GroupBy(t => t.Location))
+                {
+                    LocationViewModel locationVM = new LocationViewModel();
+                    List<DeviceViewModel> devicesVM = new List<DeviceViewModel>();
+
+                    foreach (var device in trackings.Where(t => t.Location.Equals(location.Key)).GroupBy(t => t.Device))
+                    {
+                        devicesVM.Add(new DeviceViewModel
+                        {
+                            DeviceName = device.Key.Name,
+                            Trackings = trackings.Where(t => t.Location.Equals(location.Key) && t.DeviceIdDevice.Equals(device.Key.IdDevice)).OrderBy(t => t.Dtm).Select(t => new TrackingResumenViewModel
+                            {
+                                Dtm = t.Dtm,
+                                Temperature = t.Temperature
+                            }).ToList()
+                        });
+                    }
+
+                    locationVM.LocationName = location.Key;
+                    locationVM.Devices.AddRange(devicesVM);
+                    locations.Add(locationVM);
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, locations);
+            }
+            catch (Exception e)
+            {
+                var errors = ExceptionHandlerLogger.LogInnerMessages(e);
+                return Request.CreateResponse(HttpStatusCode.Conflict, errors);
+            }
+        }
+
+        [HttpGet]
+        [Route("groupby")]
+        public HttpResponseMessage GetAlltrackingGroupBy(string location, string family)
+        {
+            try
+            {
+                //Se obtienen todos los devices por familia
+                var devices = dbContext.Devices.Where(d => d.Family.Equals(family));
+
+                //Se obtiene todos los trackings de los devices seleccionados
+                var trackings = (from A in dbContext.Trackings
+                                 join B in devices on A.DeviceIdDevice equals B.IdDevice
+                                 select A).ToList();
+
+                //Se agrupa los trackings por locations
+                List<LocationViewModel> locations = new List<LocationViewModel>();
+
+                LocationViewModel locationVM = new LocationViewModel();
+                List<DeviceViewModel> devicesVM = new List<DeviceViewModel>();
+
+                foreach (var device in trackings.Where(t => t.Location.Equals(location)).GroupBy(t => t.Device))
+                {
+                    devicesVM.Add(new DeviceViewModel
+                    {
+                        DeviceName = device.Key.Name,
+                        Trackings = trackings.Where(t => t.Location.Equals(location) && t.DeviceIdDevice.Equals(device.Key.IdDevice)).OrderBy(t => t.Dtm).Select(t => new TrackingResumenViewModel
+                        {
+                            Dtm = t.Dtm,
+                            Temperature = t.Temperature
+                        }).ToList()
+                    });
+                }
+
+                locationVM.LocationName = location;
+                locationVM.Devices.AddRange(devicesVM);
+                locations.Add(locationVM);
+
+                return Request.CreateResponse(HttpStatusCode.OK, locations);
             }
             catch (Exception e)
             {

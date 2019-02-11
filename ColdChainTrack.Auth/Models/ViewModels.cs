@@ -17,5 +17,33 @@ namespace ColdChainTrack.Auth.Models
             public double Latitude { get; set; }
             public double Longitude { get; set; }
         }
+
+        public class TrackingResumenViewModel
+        {
+            public DateTime Dtm { get; set; }
+            public int Temperature { get; set; }
+        }
+
+        public class LocationViewModel
+        {
+            public string LocationName { get; set; }
+            public List<DeviceViewModel> Devices { get; set; }
+
+            public LocationViewModel()
+            {
+                Devices = new List<DeviceViewModel>();
+            }
+        }
+
+        public class DeviceViewModel
+        {
+            public string DeviceName { get; set; }
+            public List<TrackingResumenViewModel> Trackings { get; set; }
+
+            public DeviceViewModel()
+            {
+                Trackings = new List<TrackingResumenViewModel>();
+            }
+        }
     }
 }
