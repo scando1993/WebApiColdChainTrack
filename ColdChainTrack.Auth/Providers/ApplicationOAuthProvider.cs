@@ -50,7 +50,7 @@ namespace ColdChainTrack.Auth.Providers
                     CreationDateTime = DateTime.Now
                 };
                 ApplicationDbContext db = new ApplicationDbContext();
-                db.UserLogs.Add(Item);
+                //db.UserLogs.Add(Item);
                 try
                 {
                     db.SaveChanges();
