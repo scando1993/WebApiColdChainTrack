@@ -295,7 +295,7 @@ namespace ColdChainTrack.Auth.Controllers
             //c101      d101 ...
 
             Random rdn = new Random();
-            int rowInit = 100;
+            int rowInit = 101;
             int reporteRowInit = 26;
             //List<Tracking> data = dbContext.Trackings.Where(t => t.Device.IdDevice == id).ToList();
 
