@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  coldchaintrack.auth:
+    image: ${DOCKER_REGISTRY-}coldchaintrackauth
+    build:
+      context: .\ColdChainTrack.Auth
+      dockerfile: Dockerfile
