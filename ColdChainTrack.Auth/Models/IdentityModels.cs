@@ -68,7 +68,6 @@ namespace ColdChainTrack.Auth.Models
         public int Id { get; set; }
         public DateTime Dtm { get; set; }
         public int DeviceIdDevice { get; set; }
-        public int IdLocationGroup { get; set; }
         public string Location { get; set; }
         public int Temperature { get; set; }
         public double Latitude { get; set; }
@@ -76,8 +75,6 @@ namespace ColdChainTrack.Auth.Models
 
         [ForeignKey("DeviceIdDevice")]
         public virtual Device Device { get; set; }
-        [ForeignKey("IdLocationGroup")]
-        public virtual LocationGroup LocationGroup { get; set; }
     }
 
     [Table("Devices")]
@@ -104,28 +101,5 @@ namespace ColdChainTrack.Auth.Models
         public DateTime time { get; set; }
         public String payload1 { get; set; }
         public String payload2 { get; set; }
-    }
-
-    [Table("LocationGroup")]
-    public class LocationGroup
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        public int IdGroup { get; set; }
-        public string LocationName { get; set; }
-
-        [ForeignKey("IdGroup")]
-        public virtual Group Group { get; set; }
-
-    }
-
-    [Table("Group")]
-    public class Group
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-        public string Name { get; set; }
     }
 }
