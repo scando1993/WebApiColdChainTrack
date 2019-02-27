@@ -263,6 +263,18 @@ namespace ColdChainTrack.Auth.Controllers
 
         }
 
+        [HttpGet]
+        [Route("getDeviceInfo")]
+        public HttpResponseMessage GetDeviceInfo(int deviceId) {
+
+            Device device = dbContext.Devices.FirstOrDefault(d=> d.IdDevice == deviceId);
+
+            if(device!=null) return Request.CreateResponse(HttpStatusCode.OK, device);
+
+            return Request.CreateResponse(HttpStatusCode.NotFound);
+
+        }
+
         /// <summary>
         /// Get Excel Report (Seguimiento de cadena de frio)
         /// </summary>
@@ -387,14 +399,5 @@ namespace ColdChainTrack.Auth.Controllers
                 reporteRowInit++;
             }
         }
-
-        private IEnumerable<LocationName> getLocations(List<Tracking> data)
-        {
-            var locations = data.GroupBy(d => d.Location, (key, group) => new LocationName { name = key });
-
-            return locations;
-        }
-
-
     }
 }
