@@ -265,11 +265,12 @@ namespace ColdChainTrack.Auth.Controllers
 
         [HttpGet]
         [Route("getDeviceInfo")]
-        public HttpResponseMessage GetDeviceInfo(int deviceId) {
+        public HttpResponseMessage GetDeviceInfo(int deviceId)
+        {
 
-            Device device = dbContext.Devices.FirstOrDefault(d=> d.IdDevice == deviceId);
+            Device device = dbContext.Devices.FirstOrDefault(d => d.IdDevice == deviceId);
 
-            if(device!=null) return Request.CreateResponse(HttpStatusCode.OK, device);
+            if (device != null) return Request.CreateResponse(HttpStatusCode.OK, device);
 
             return Request.CreateResponse(HttpStatusCode.NotFound);
 
@@ -282,8 +283,20 @@ namespace ColdChainTrack.Auth.Controllers
         /// <returns>excel file</returns>
         [HttpGet]
         [Route("report")]
-        public HttpResponseMessage Get(int id)
+        public HttpResponseMessage Get(int idDevice, DateTime start, DateTime end)
         {
+            //2019-02-07
+
+            if (end == null)
+            {
+                DateTime today = DateTime.Now.Date;
+                end = new DateTime(today.Year, today.Month, DateTime.DaysInMonth(today.Year, today.Month));
+                start = new DateTime(end.Year, end.Month, 1);
+            }
+            start = start.Date;
+            end = end.Date.AddDays(1).AddTicks(-1);
+
+
             Stream templateStream = new MemoryStream();
 
             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "templates", "analisis.xlsx");
@@ -297,7 +310,6 @@ namespace ColdChainTrack.Auth.Controllers
             MemoryStream memoryStream = new MemoryStream();
             var templateWorkbook = new ExcelPackage(templateStream);
 
-
             //ISheet sheet = templateWorkbook.GetSheetAt(0);
             ExcelWorksheet sheet = templateWorkbook.Workbook.Worksheets[1];
             ExcelWorksheet reporte = templateWorkbook.Workbook.Worksheets[2];
@@ -305,23 +317,18 @@ namespace ColdChainTrack.Auth.Controllers
             //FECHA     HORA        Temperatura Aceptable   Ideal
             //5/2/2018	16:15:00	4,90	    -2      8   1	4
             //c101      d101 ...
-
-            Random rdn = new Random();
             int rowInit = 101;
-            int reporteRowInit = 26;
             //List<Tracking> data = dbContext.Trackings.Where(t => t.Device.IdDevice == id).ToList();
 
-            List<Tracking> centroDistribucion = dbContext.Trackings.Where(cd => cd.Location == "recepcion y carga lacteos - embutidos" || cd.Location == "recepcion carnes" || cd.Location == "despacho fruver" || cd.Location == "despacho lacteos - embutidos").ToList();
+            List<Tracking> centroDistribucion = dbContext.Trackings.Where(cd => cd.Location == "recepcion y carga lacteos - embutidos" || cd.Location == "recepcion carnes" || cd.Location == "despacho fruver" || cd.Location == "despacho lacteos - embutidos" && cd.DeviceIdDevice == idDevice && cd.Dtm >= start && cd.Dtm <= end).ToList();
 
-            List<Tracking> transporte = dbContext.Trackings.Where(cd => cd.Location == "?").ToList();
+            List<Tracking> transporte = dbContext.Trackings.Where(cd => cd.Location == "?" && cd.DeviceIdDevice == idDevice && cd.Dtm >= start && cd.Dtm <= end).ToList();
 
-            List<Tracking> local = dbContext.Trackings.Where(cd => cd.Location == "descarga furgon").ToList();
-            List<Tracking> exibidor = dbContext.Trackings.Where(cd => cd.Location == "exibidor carnes" || cd.Location == "exibidor legumbres" || cd.Location == "exibidor pollo" || cd.Location == "exibidor lacteos").ToList();
+            List<Tracking> local = dbContext.Trackings.Where(cd => cd.Location == "descarga furgon" && cd.DeviceIdDevice == idDevice && cd.Dtm >= start && cd.Dtm <= end).ToList();
+            List<Tracking> exibidor = dbContext.Trackings.Where(cd => cd.Location == "exibidor carnes" || cd.Location == "exibidor legumbres" || cd.Location == "exibidor pollo" || cd.Location == "exibidor lacteos" && cd.DeviceIdDevice == idDevice && cd.Dtm >= start && cd.Dtm <= end).ToList();
 
             if (transporte != null && transporte.Count > 0)
             {
-
-                //var info = getLocations(data);
                 string loc1 = "Centro Distribución";
                 string loc2 = "Transporte";
                 string loc3 = "Local";
@@ -380,11 +387,11 @@ namespace ColdChainTrack.Auth.Controllers
                 {
                     sheet.Cells[i + rowInit, columnInit].Value = $"{dtm.Date.Day}/{dtm.Date.Month}/{dtm.Date.Year}";
                     sheet.Cells[i + rowInit, columnInit + 1].Value = dtm.ToString("HH:mm:ss");
-                    sheet.Cells[i + rowInit, columnInit+ 2].Value = items[i].Temperature;
+                    sheet.Cells[i + rowInit, columnInit + 2].Value = items[i].Temperature;
                     sheet.Cells[i + rowInit, columnInit + 3].Value = -2;
                     sheet.Cells[i + rowInit, columnInit + 4].Value = 8;
-                    sheet.Cells[i + rowInit, columnInit+ 5].Value = 1;
-                    sheet.Cells[i + rowInit, columnInit+6].Value = 4;
+                    sheet.Cells[i + rowInit, columnInit + 5].Value = 1;
+                    sheet.Cells[i + rowInit, columnInit + 6].Value = 4;
 
                     //reporte.Cells[reporteRowInit, 1].Value = i + 1;
                     //reporte.Cells[reporteRowInit, 2].Value = items[i].Location;
