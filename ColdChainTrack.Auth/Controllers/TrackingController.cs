@@ -276,13 +276,16 @@ namespace ColdChainTrack.Auth.Controllers
         }
 
         /// <summary>
-        /// Get Excel Report (Seguimiento de cadena de frio)
+        /// Generate excel report
         /// </summary>
-        /// <param name="id">Device id</param>
-        /// <returns>excel file</returns>
+        /// <param name="deviceName">Device Name</param>
+        /// <param name="family">Family/Group</param>
+        /// <param name="start">Start date</param>
+        /// <param name="end">End date</param>
+        /// <returns></returns>
         [HttpGet]
         [Route("report")]
-        public HttpResponseMessage Get(int id)
+        public HttpResponseMessage Get(string deviceName, string family, DateTime? start, DateTime? end)
         {
             Stream templateStream = new MemoryStream();
 
@@ -308,46 +311,48 @@ namespace ColdChainTrack.Auth.Controllers
 
             Random rdn = new Random();
             int rowInit = 101;
-            int reporteRowInit = 26;
             //List<Tracking> data = dbContext.Trackings.Where(t => t.Device.IdDevice == id).ToList();
 
-            List<Tracking> centroDistribucion = dbContext.Trackings.Where(cd => cd.Location == "recepcion y carga lacteos - embutidos" || cd.Location == "recepcion carnes" || cd.Location == "despacho fruver" || cd.Location == "despacho lacteos - embutidos").ToList();
+            Device device = dbContext.Devices.FirstOrDefault(d=> d.Name == deviceName && d.Family == family);
 
-            List<Tracking> transporte = dbContext.Trackings.Where(cd => cd.Location == "?").ToList();
-
-            List<Tracking> local = dbContext.Trackings.Where(cd => cd.Location == "descarga furgon").ToList();
-            List<Tracking> exibidor = dbContext.Trackings.Where(cd => cd.Location == "exibidor carnes" || cd.Location == "exibidor legumbres" || cd.Location == "exibidor pollo" || cd.Location == "exibidor lacteos").ToList();
-
-            if (transporte != null && transporte.Count > 0)
+            if (device != null && start != null && end != null)
             {
+                List<Tracking> centroDistribucion = dbContext.Trackings.Where(cd => cd.Location == "recepcion y carga lacteos - embutidos" || cd.Location == "recepcion carnes" || cd.Location == "despacho fruver" || cd.Location == "despacho lacteos - embutidos" && cd.DeviceIdDevice == device.IdDevice && cd.Dtm >= start && cd.Dtm <= end).ToList();
 
-                //var info = getLocations(data);
-                string loc1 = "Centro Distribución";
-                string loc2 = "Transporte";
-                string loc3 = "Local";
-                string loc4 = "Exibidores";
+                List<Tracking> transporte = dbContext.Trackings.Where(cd => cd.Location == "?" && cd.DeviceIdDevice == device.IdDevice && cd.Dtm >= start && cd.Dtm <= end).ToList();
 
-                sheet.Cells[rowInit, 2].Value = loc1;
-                //sheet.GetRow(rowInit).GetCell(1).SetCellValue(loc1);
+                List<Tracking> local = dbContext.Trackings.Where(cd => cd.Location == "descarga furgon" && cd.DeviceIdDevice == device.IdDevice && cd.Dtm >= start && cd.Dtm <= end).ToList();
+                List<Tracking> exibidor = dbContext.Trackings.Where(cd => cd.Location == "exibidor carnes" || cd.Location == "exibidor legumbres" || cd.Location == "exibidor pollo" || cd.Location == "exibidor lacteos" && cd.DeviceIdDevice == device.IdDevice && cd.Dtm >= start && cd.Dtm <= end).ToList();
 
-                completarRegistros(sheet, reporte, centroDistribucion, rowInit, 3);
+                if (transporte != null && transporte.Count > 0)
+                {
+                    //var info = getLocations(data);
+                    string loc1 = "Centro Distribución";
+                    string loc2 = "Transporte";
+                    string loc3 = "Local";
+                    string loc4 = "Exibidores";
 
-                completarRegistros(sheet, reporte, transporte, rowInit, 12);
+                    sheet.Cells[rowInit, 2].Value = loc1;
+                    //sheet.GetRow(rowInit).GetCell(1).SetCellValue(loc1);
 
-                completarRegistros(sheet, reporte, local, rowInit, 21);
+                    completarRegistros(sheet, reporte, centroDistribucion, rowInit, 3);
 
-                completarRegistros(sheet, reporte, exibidor, rowInit, 30);
+                    completarRegistros(sheet, reporte, transporte, rowInit, 12);
 
-                sheet.Cells[rowInit, 11].Value = loc2;
-                //11 fecha, 12 hora, 13 temp, 14 acep1, 15 acep2, 16 ideal1, 17 ideal2
-                sheet.Cells[rowInit, 20].Value = loc3;
-                //20 fecha, 21 hora, 22 temp, 23 acep1, 24 acep2, 25 ideal1, 26 ideal2
-                //sheet.GetRow(rowInit).GetCell(28).SetCellValue(loc4);
-                sheet.Cells[rowInit, 29].Value = loc4;
-                //29 fecha, 30 hora, 31 temp, 32 acep1, 33 acep2, 34 ideal1, 35 ideal2
+                    completarRegistros(sheet, reporte, local, rowInit, 21);
+
+                    completarRegistros(sheet, reporte, exibidor, rowInit, 30);
+
+                    sheet.Cells[rowInit, 11].Value = loc2;
+                    //11 fecha, 12 hora, 13 temp, 14 acep1, 15 acep2, 16 ideal1, 17 ideal2
+                    sheet.Cells[rowInit, 20].Value = loc3;
+                    //20 fecha, 21 hora, 22 temp, 23 acep1, 24 acep2, 25 ideal1, 26 ideal2
+                    //sheet.GetRow(rowInit).GetCell(28).SetCellValue(loc4);
+                    sheet.Cells[rowInit, 29].Value = loc4;
+                    //29 fecha, 30 hora, 31 temp, 32 acep1, 33 acep2, 34 ideal1, 35 ideal2
+                }
+                sheet.Cells[19, 3].Calculate();
             }
-            sheet.Cells[19, 3].Calculate();
-
             //XSSFFormulaEvaluator.EvaluateAllFormulaCells(templateWorkbook);
             templateWorkbook.SaveAs(memoryStream);
             templateWorkbook.Dispose();
